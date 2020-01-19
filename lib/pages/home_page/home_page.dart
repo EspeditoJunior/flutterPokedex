@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:pokedex/consts/consts_app.dart';
+import 'package:pokedex/models/pokeapi.dart';
 import 'package:pokedex/pages/home_page/widgets/app_bar_home.dart';
+import 'package:pokedex/stores/pokeapi_store.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  
+  PokeApiStore pokeApiStore;
+
+  @override
+  void initState() {
+    super.initState();
+    pokeApiStore = PokeApiStore();
+    pokeApiStore.fectchPokemonList();
+  }
+  
   @override
   Widget build(BuildContext context) {
+    
     double  screenWidth  = MediaQuery.of(context).size.width;
     double  statusWidth  = MediaQuery.of(context).padding.top;
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -30,16 +50,23 @@ class HomePage extends StatelessWidget {
                 AppBarHome(),
                 Expanded(
                   child: Container(
-                    child: ListView(
-                      children: <Widget>[
-                        ListTile(
-                          title: Text('Pokemon 1')
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 2')
-                        ),
-                      ],
-                    )
+                    child: Observer(
+                      builder: (BuildContext context) {
+                        PokeApi _pokeApi = pokeApiStore.pokeAPI;
+
+                        return (_pokeApi != null) ?
+                          ListView.builder(
+                            itemCount: _pokeApi.pokemon.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(title: Text(_pokeApi.pokemon[index].name),);
+                            },
+                          )
+                        : Center (
+                            child: CircularProgressIndicator(),
+                          );
+
+                      },
+                    ),
                   ),
                 )
               ],
