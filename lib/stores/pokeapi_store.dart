@@ -22,6 +22,16 @@ abstract class _PokeApiStoreBase with Store {
   }
 
   @action
+  setPokemonAtual(int index) {
+    return pokeAPI.pokemon[index];
+  }
+
+  @action
+  getPokemonAtual(int index) {
+    return pokeAPI.pokemon[index];
+  }
+
+  @action
   fectchPokemonList() {
     pokeAPI = null;
     loadPokeApi().then((pokeList){
