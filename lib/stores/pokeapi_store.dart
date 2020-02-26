@@ -11,61 +11,57 @@ part 'pokeapi_store.g.dart';
 class PokeApiStore = _PokeApiStoreBase with _$PokeApiStore;
 
 abstract class _PokeApiStoreBase with Store {
-  
 
   @observable
-  PokeApi pokeAPI;
+  PokeApi _pokeAPI; 
+
+  @observable
+  Pokemon _pokemonAtual; 
+
+  @computed 
+  PokeApi get pokeAPI => _pokeAPI;
+
+  @computed 
+  Pokemon get pokemonAtual => _pokemonAtual;
 
   @action
-  getPokemon(int index) {
-    return pokeAPI.pokemon[index];
-  }
-
-  @action
-  setPokemonAtual(int index) {
-    return pokeAPI.pokemon[index];
-  }
-
-  @action
-  getPokemonAtual(int index) {
-    return pokeAPI.pokemon[index];
-  }
-
-  @action
-  fectchPokemonList() {
-    pokeAPI = null;
-    loadPokeApi().then((pokeList){
-      pokeAPI = pokeList;
+  fetchPokemonList() {
+    _pokeAPI = null;
+    loadPokeAPI().then((pokeList) {
+      _pokeAPI = pokeList;
     });
   }
 
-  @action
-  Widget getImage(String numero) {
-    return CachedNetworkImage (
+  @action 
+  getPokemon({int index}){
+    return _pokeAPI.pokemon[index];
+  }
+
+  @action 
+  setPokemonAtual({int index}){
+    _pokemonAtual = _pokeAPI.pokemon[index];
+  }
+
+  @action 
+  Widget getImage({String numero}) {
+    return CachedNetworkImage(
       placeholder: (context, url) => new Container(
         color: Colors.transparent,
       ),
-      imageUrl: 'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$numero.png',
+      imageUrl:
+          'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$numero.png',
     );
   }
 
-  @action
-  
-
-  Future<PokeApi> loadPokeApi() async {
+  Future<PokeApi> loadPokeAPI() async {
     try {
       final response = await http.get(ConstsApi.pokeapiURL);
       var decodeJson = jsonDecode(response.body);
       return PokeApi.fromJson(decodeJson);
-    } catch (error) {
-      print ("Erro ao carregar lista");
-
-      print ("////////////////////////");
-      print (error);
-      print ("///////////////////////");
-
+    } catch (error, stacktrace) {
+      print("Erro ao carregar lista" + stacktrace.toString());
       return null;
     }
   }
-
+  
 }

@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
     final _pokemonStore = Provider.of<PokeApiStore>(context);
     
     if(_pokemonStore.pokeAPI == null){
-      _pokemonStore.fectchPokemonList();
+      _pokemonStore.fetchPokemonList();
     }
     
     double  screenWidth  = MediaQuery.of(context).size.width;
@@ -63,7 +63,7 @@ class HomePage extends StatelessWidget {
                                 ),
                               itemCount: _pokeApi.pokemon.length,
                               itemBuilder: (context, index) {
-                                Pokemon pokemon = _pokemonStore.getPokemon(index);
+                                Pokemon pokemon = _pokemonStore.getPokemon(index: index);
                                 return AnimationConfiguration.staggeredGrid(
                                   position: index,
                                   duration: const Duration(milliseconds: 375),
@@ -80,6 +80,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       ),
                                       onTap: () {
+                                        _pokemonStore.setPokemonAtual(index: index);
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
